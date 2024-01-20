@@ -1,8 +1,8 @@
 # Nokori API
 
-Nokori is a universal data layer that allows developers to connect SQL databases and any third party API via a very intuitive UI. Once connected, developers can consume queries/endpoints globally without boilerplate code via the SDK or API.
+Nokori is a universal data layer that allows developers to connect SQL databases, document stores, vector dbs, and any third party API via a very intuitive UI.
 
-Consume data from a myriad of backend datbases and data sources from a singular, unified API.
+Once connected, developers can consume queries/endpoints globally via a univerally consistent, singular REST API without boilerplate code via the SDK or API.
 
 Scaling up your API is as easy as adding more servers to the cluster.
 
