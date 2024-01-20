@@ -1,8 +1,10 @@
 # Nokori API
 
-Nokori is now Open Source!
+Nokori is a universal data layer that allows developers to connect SQL databases and any third party API via a very intuitive UI. Once connected, developers can consume queries/endpoints globally without boilerplate code via the SDK or API.
 
-There be dragons here - this repo will likely need some touching up before it's simple to stand up locally. PRs welcome.
+Consume data from a myriad of backend datbases and data sources from a singular, unified API.
+
+Scaling up your API is as easy as adding more servers to the cluster.
 
 ## About
 
