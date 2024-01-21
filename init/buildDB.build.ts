@@ -83,7 +83,7 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
       process.exit(1)
     }
 
-  } catch (error) {
+  } catch (error: any) {
     out(chalk.red('\u2717 Error: ' + error.message + '\n'))
     process.exit(1)
   }
@@ -91,13 +91,8 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
   out('Attempting to create database... \n')
 
   try {
-    db.query(buildSQL, (err: any) => {
-      if (err) throw err;
-      console.log('Database setup completed.');
-      db.end();
-    });
-
-  } catch (error) {
+    await db.query(buildSQL, [])
+  } catch (error: any) {
     out(chalk.red('\u2717 Error: ' + error.message + '\n'))
     process.exit(1)
   }

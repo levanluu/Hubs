@@ -47,13 +47,13 @@ if (process.env.NODE_ENV !== 'test') {
   pool.getConnection((err, connection) => {
     if (err) {
       if (err.code === 'PROTOCOL_CONNECTION_LOST')
-        logger.error('Database connection was closed.')
+        console.error('Database connection was closed.')
 
       if (err.code === 'ER_CON_COUNT_ERROR')
-        logger.error('Database has too many connections.')
+        console.error('Database has too many connections.')
 
       if (err.code === 'ECONNREFUSED')
-        logger.error('Database connection was refused.')
+        console.error('Database connection was refused.')
     }
     if (connection) connection.release()
   })
@@ -92,7 +92,7 @@ const rollback = (err) => {
       if (err) {
         // Fall back to torching the connection
         pool.end()
-        logger.error(err)
+        console.error(err)
         return reject(err)
       }
 
