@@ -7,6 +7,12 @@ import PackageInfo from '../package.json'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'url';
+import cac from 'cac';
+import inquirer from 'inquirer';
+import { apiKey, accountId, platformAccountId } from '../src/utils/ids'
+import AuthService from '../src/services/auth/auth.service';
+
+const cli = cac('docker-setup');
 
 const out = console.log;
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -69,7 +75,16 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
   out('\u2713 DB_PASS found ')
   out(chalk.green('\u2713 All environmental configurations found \n'))
 
+  const projectName = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'projectName',
+      message: 'What is the name of your project?'
+    }
+  ])
+
   out(chalk.black.bgWhite.bold('Init database setup \n'))
+  await sleep(1000)
 
   out('Attempting to connect to database... \n')
 
@@ -88,6 +103,8 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     process.exit(1)
   }
 
+  await sleep(1000)
+
   out('Attempting to create database... \n')
 
   try {
@@ -96,9 +113,63 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     out(chalk.red('\u2717 Error: ' + error.message + '\n'))
     process.exit(1)
   }
+  await sleep(1000)
 
-  out(chalk.black.bgWhite.bold('Database setup completed. \n'))
+  out(chalk.green.bold('Database setup completed. \n'))
+  await sleep(1000)
 
   out(chalk.black.bgWhite.bold('Generating API Keys... \n'))
+  await sleep(1000)
 
+  const newPlatformAccountId = platformAccountId()
+  out(chalk.green('\u2713 Platform account generated. \n'))
+  await sleep(1000)
+
+
+  out(chalk.black.bgWhite('Basic Account Setup... \n'))
+
+  const userInfo = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'email',
+      message: 'Login Email:'
+    },
+    {
+      type: 'password',
+      name: 'password',
+      message: 'Login Password:'
+    }
+  ])
+
+  const user = await AuthService.createUser(newPlatformAccountId, {
+    email: userInfo.email,
+    password: userInfo.password,
+    autoVerify: true,
+  })
+
+  console.log('\n')
+
+  if (!user.userId) {
+    out(chalk.red('\u2717 Error: Failed to create user. \n'))
+    process.exit(1)
+  }
+
+  out(chalk.green('\u2713 Account id generated. \n'))
+  await sleep(1000)
+
+  const newAPIKey = apiKey()
+  out(chalk.green('\u2713 API Keys generated.'))
+
+  await db.query(`INSERT INTO platform_keys SET platformAccountId = ?, publicKey = ?`, [newPlatformAccountId, newAPIKey])
+
+  out(chalk.green('\u2713 API Keys saved to database. \n'))
+
+  out(chalk.black.bgWhite.bold('Setup Complete! \n'))
+  await sleep(1000)
+
+  out(chalk.black.bgWhite(`API Key:`) + ` ${newAPIKey} \n`)
+
+  console.log(`${chalk.white('To start the server:')} ${chalk.cyan('npm run dev')} \n`)
+
+  process.exit()
 })()

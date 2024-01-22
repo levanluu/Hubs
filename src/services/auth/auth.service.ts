@@ -5,7 +5,7 @@ import AccountsService from '@/services/accounts/accounts.service'
 import type Accounts from '@/repositories/accounts/accounts.interface'
 import UserRepository from '@/repositories/auth/users.repo'
 import type { IUserModel } from '@/types/accounts/UsersModel.interface'
-import MailService from '@/services/email'
+// import MailService from '@/services/email'
 import IDs from '@/utils/ids'
 import { slink } from '@/utils/slinky'
 
@@ -25,7 +25,7 @@ const _setPassword = (password) => {
 
 const generatePasswordResetToken = async (accountId: IUserModel['accountId'], userId: IUserModel['userId']) => {
   const resetToken: string = IDs.random(26)
-  
+
   const update: Partial<IUserModel> = {}
 
   const updated = await UserRepository.updateUser(accountId, userId, update)
@@ -78,16 +78,16 @@ const saveNewPassword = async (platformAccountId: IUserModel['platformAccountId'
 const userAuthorized = async (platformAccountId: string, accessToken: string) => {
   const session = await SessionService.getSession(platformAccountId, accessToken)
 
-  if(!session)
+  if (!session)
     return null
 
-  try { 
+  try {
     await SessionService.refreshSession(session)
-    
+
     const now = Math.floor(new Date().getTime() / 1000) // / 1000 to get seconds
 
     const currentSession = await SessionService.getSession(platformAccountId, accessToken)
-    if(currentSession && currentSession.expiresAt! > now) return currentSession
+    if (currentSession && currentSession.expiresAt! > now) return currentSession
 
     return null
   }
@@ -133,8 +133,8 @@ interface IArgs extends Partial<IUserModel> {
   autoVerify: boolean
 }
 const createUser = async (platformAccountId, args: IArgs) => {
-  if(!platformAccountId || !args.email) return null
-  
+  if (!platformAccountId || !args.email) return null
+
   const { email, autoVerify, ...restUser } = args
 
   const _email = args.email.toLowerCase()
@@ -144,34 +144,34 @@ const createUser = async (platformAccountId, args: IArgs) => {
     ...restUser,
   }
 
-  if(autoVerify && user.password)
+  if (autoVerify && user.password)
     user.verified = true
-  
+
   let accountId = ''
   const userExists = await UserRepository.getUserByEmail(platformAccountId, _email)
 
-  if (userExists) 
+  if (userExists)
     return false
 
   accountId = IDs.accountId()
   try {
-    await AccountsService.createAccount(platformAccountId, accountId) 
+    await AccountsService.createAccount(platformAccountId, accountId)
   }
   catch (error) {
     logger.error('Error creating account', error)
     return null
   }
 
-  const masterPlatformAccountIds = ['lola.acct.Ng2kvR5c1WKBHLJfbvekW1', 'lola.acct.fj02Txhpcpqfj3ovCxW']
-  if(masterPlatformAccountIds.includes(platformAccountId)) 
-    await AccountCredentialsService.createAPIKey(accountId)
-  
+  // const masterPlatformAccountIds = ['lola.acct.Ng2kvR5c1WKBHLJfbvekW1', 'lola.acct.fj02Txhpcpqfj3ovCxW']
+  // if(masterPlatformAccountIds.includes(platformAccountId)) 
+  //   await AccountCredentialsService.createAPIKey(accountId)
+
   user.platformAccountId = platformAccountId
   user.accountId = accountId
-  
+
   let passParts
-  
-  if(user.password) 
+
+  if (user.password)
     passParts = _setPassword(user.password)
 
   user.userId = _generateUID()
@@ -182,7 +182,7 @@ const createUser = async (platformAccountId, args: IArgs) => {
   user.verified = args.autoVerify ? true : false
 
   const userRecord = slink(user)
- 
+
   const createSuccess = await UserRepository.createUser(userRecord as IUserModel)
   if (createSuccess) {
     const createdUser = await UserRepository.getUserByEmail(platformAccountId, _email)
@@ -226,18 +226,18 @@ const sendVerificationEmail = async (user) => {
 
   ${verifyUrl}
   `
-  
+
   // TODO: Should subjects be configurable? I guess they'll have to be.
   // 
-  const sent = await MailService.send({
-    to: user.email,
-    subject: 'Please verify your email',
-    template: 'confirm_account_creation',
-    variables: {
-      verify_url: verifyUrl,
-    },
-    text,
-  })
+  // const sent = await MailService.send({
+  //   to: user.email,
+  //   subject: 'Please verify your email',
+  //   template: 'confirm_account_creation',
+  //   variables: {
+  //     verify_url: verifyUrl,
+  //   },
+  //   text,
+  // })
 
   logger.info('Verification email sent', { user: user.user_id, status: sent })
 
@@ -259,16 +259,16 @@ const sendPasswordResetEmail = async (accountId: string, user) => {
   f you ignore this message, your password will not be changed. If you didn't request a password reset, please let us know.`
 
   // send email
-  const sent = await MailService.send({
-    to: user.email,
-    subject: 'Reset your password',
-    template: 'auth_reset_password',
-    variables: {
-      first_name: firstName,
-      link,
-    },
-    text,
-  })
+  // const sent = await MailService.send({
+  //   to: user.email,
+  //   subject: 'Reset your password',
+  //   template: 'auth_reset_password',
+  //   variables: {
+  //     first_name: firstName,
+  //     link,
+  //   },
+  //   text,
+  // })
 
   logger.info('Password reset email sent', { user, status: sent })
 
@@ -279,11 +279,10 @@ const sendPasswordResetEmail = async (accountId: string, user) => {
  * A function that takes object user of type IUserModel and returns
  * only the userId and accountId properties as an object.
  */
-const sanitizeUserForToken = (user: IUserModel): 
-{ 
+const sanitizeUserForToken = (user: IUserModel): {
   userId: IUserModel['userId']
   accountId: IUserModel['accountId']
-  platformAccountId: IUserModel['platformAccountId'] 
+  platformAccountId: IUserModel['platformAccountId']
 } => {
 
   const { userId, accountId, platformAccountId } = user
