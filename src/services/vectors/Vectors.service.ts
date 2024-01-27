@@ -1,9 +1,8 @@
-import addon from '@/bindings/vectors/cosine_similarity.cjs'
 import type { RollingAverageResult } from '@/types/vectors/VectorService.types'
 import VectorDistanceMeasures from '@/enums/vectors/DistanceMeasures.enum'
 import VectorSimilarityMeasures from '@/enums/vectors/SimilarityMeasures.enum'
 
-export const cosineSimilarity = async (vec1: number[], vec2: number[]): Promise<{value: number | null; error: string | null}> => {
+export const cosineSimilarity = async (vec1: number[], vec2: number[]): Promise<{ value: number | null; error: string | null }> => {
   try {
     const result: number = await addon.cosineSimilarity(vec1, vec2)
     return { value: result, error: null }
@@ -12,10 +11,10 @@ export const cosineSimilarity = async (vec1: number[], vec2: number[]): Promise<
     logger.error('Vectors must be of the same length')
     return { value: null, error: 'Vectors must be of the same length' }
   }
-  
+
 }
 
-const cosineDistance = async (vec1: number[], vec2: number[]): Promise<{value: number | null; error: string | null}> => {
+const cosineDistance = async (vec1: number[], vec2: number[]): Promise<{ value: number | null; error: string | null }> => {
   try {
     const similarity: number = await addon.cosineSimilarity(vec1, vec2)
     const result = 1 - similarity
@@ -27,9 +26,9 @@ const cosineDistance = async (vec1: number[], vec2: number[]): Promise<{value: n
   }
 }
 
-const euclideanDistance = async (vec1: number[], vec2: number[]): Promise<{value: number | null; error: string | null}> => {
+const euclideanDistance = async (vec1: number[], vec2: number[]): Promise<{ value: number | null; error: string | null }> => {
   try {
-    if (vec1.length !== vec2.length) 
+    if (vec1.length !== vec2.length)
       throw new Error('Vectors must be of the same length')
 
     let sum = 0
@@ -47,13 +46,13 @@ const euclideanDistance = async (vec1: number[], vec2: number[]): Promise<{value
   }
 }
 
-const manhattanDistance = async (vec1: number[], vec2: number[]): Promise<{value: number | null; error: string | null}> => {
+const manhattanDistance = async (vec1: number[], vec2: number[]): Promise<{ value: number | null; error: string | null }> => {
   try {
-    if (vec1.length !== vec2.length) 
+    if (vec1.length !== vec2.length)
       throw new Error('Vectors must be of the same length')
 
     let sum = 0
-    for (let i = 0; i < vec1.length; i++) 
+    for (let i = 0; i < vec1.length; i++)
       sum += Math.abs(vec1[i] - vec2[i])
 
     const result = sum
@@ -65,17 +64,17 @@ const manhattanDistance = async (vec1: number[], vec2: number[]): Promise<{value
   }
 }
 
-const chebyshevDistance = async (vec1: number[], vec2: number[]): Promise<{value: number | null; error: string | null}> => {
+const chebyshevDistance = async (vec1: number[], vec2: number[]): Promise<{ value: number | null; error: string | null }> => {
   try {
-    if (vec1.length !== vec2.length) 
+    if (vec1.length !== vec2.length)
       throw new Error('Vectors must be of the same length')
 
     let maxDiff = 0
     for (let i = 0; i < vec1.length; i++) {
       const diff = Math.abs(vec1[i] - vec2[i])
-      if (diff > maxDiff) 
+      if (diff > maxDiff)
         maxDiff = diff
-      
+
     }
 
     const result = maxDiff
@@ -87,18 +86,18 @@ const chebyshevDistance = async (vec1: number[], vec2: number[]): Promise<{value
   }
 }
 
-const hammingDistance = async (vec1: number[], vec2: number[]): Promise<{value: number | null; error: string | null}> => {
+const hammingDistance = async (vec1: number[], vec2: number[]): Promise<{ value: number | null; error: string | null }> => {
   try {
-    if (vec1.length !== vec2.length) 
+    if (vec1.length !== vec2.length)
       throw new Error('Vectors must be of the same length')
 
     let count = 0
     for (let i = 0; i < vec1.length; i++) {
-      if (vec1[i] !== vec2[i]) 
+      if (vec1[i] !== vec2[i])
         count++
-          
+
     }
-  
+
     const result = count
     return { value: result, error: null }
   }
@@ -108,8 +107,8 @@ const hammingDistance = async (vec1: number[], vec2: number[]): Promise<{value: 
   }
 }
 
-export const distance = async (vec1: number[], vec2: number[], measure: VectorDistanceMeasures = VectorDistanceMeasures.COSINE): Promise<{value: number | null; error: string | null}> => {
-  if (vec1.length !== vec2.length) 
+export const distance = async (vec1: number[], vec2: number[], measure: VectorDistanceMeasures = VectorDistanceMeasures.COSINE): Promise<{ value: number | null; error: string | null }> => {
+  if (vec1.length !== vec2.length)
     throw new Error('Vectors must be of the same length')
 
   switch (measure) {
@@ -128,16 +127,16 @@ export const distance = async (vec1: number[], vec2: number[], measure: VectorDi
   }
 }
 
-const hammingSimilarity = async (vec1: number[], vec2: number[]): Promise<{value: number | null; error: string | null}> => {
+const hammingSimilarity = async (vec1: number[], vec2: number[]): Promise<{ value: number | null; error: string | null }> => {
   try {
-    if (vec1.length !== vec2.length) 
+    if (vec1.length !== vec2.length)
       throw new Error('Vectors must be of the same length')
 
     const distance = await hammingDistance(vec1, vec2)
-    if(distance.error)
+    if (distance.error)
       return { value: null, error: distance.error }
-    
-    if(!distance.value)
+
+    if (!distance.value)
       throw new Error('Hamming Distance could not be computed')
 
     const result = 1 - (distance.value / vec1.length)
@@ -149,16 +148,16 @@ const hammingSimilarity = async (vec1: number[], vec2: number[]): Promise<{value
   }
 }
 
-const euclideanSimilarity = async (vec1: number[], vec2: number[]): Promise<{value: number | null; error: string | null}> => {
+const euclideanSimilarity = async (vec1: number[], vec2: number[]): Promise<{ value: number | null; error: string | null }> => {
   try {
-    if (vec1.length !== vec2.length) 
+    if (vec1.length !== vec2.length)
       throw new Error('Vectors must be of the same length')
 
     const distance = await euclideanDistance(vec1, vec2)
-    if(distance.error)
+    if (distance.error)
       return { value: null, error: distance.error }
-    
-    if(!distance.value)
+
+    if (!distance.value)
       throw new Error('Euclidean Distance could not be computed')
 
     const result = 1 / (1 + distance.value)
@@ -170,9 +169,9 @@ const euclideanSimilarity = async (vec1: number[], vec2: number[]): Promise<{val
   }
 }
 
-const jaccardSimilarity = async (vec1: any[], vec2: any[]): Promise<{value: number | null; error: string | null}> => {
+const jaccardSimilarity = async (vec1: any[], vec2: any[]): Promise<{ value: number | null; error: string | null }> => {
   try {
-    if (vec1.length !== vec2.length) 
+    if (vec1.length !== vec2.length)
       throw new Error('Vectors must be of the same length')
 
     const intersection = vec1.filter(value => vec2.includes(value))
@@ -190,30 +189,30 @@ const mean = (vec: number[]): number => {
   return vec.reduce((sum, val) => sum + val, 0) / vec.length
 }
 
-const pearsonCorrelationCoefficient = async (vec1: number[], vec2: number[]): Promise<{value: number | null; error: string | null}> => {
+const pearsonCorrelationCoefficient = async (vec1: number[], vec2: number[]): Promise<{ value: number | null; error: string | null }> => {
   try {
-    if (vec1.length !== vec2.length) 
+    if (vec1.length !== vec2.length)
       throw new Error('Vectors must be of the same length')
 
     const meanVec1 = mean(vec1)
     const meanVec2 = mean(vec2)
-  
+
     let numerator = 0
     let denominator1 = 0
     let denominator2 = 0
-  
+
     for (let i = 0; i < vec1.length; i++) {
       const term1 = vec1[i] - meanVec1
       const term2 = vec2[i] - meanVec2
-  
+
       numerator += term1 * term2
       denominator1 += term1 * term1
       denominator2 += term2 * term2
     }
-  
-    if (denominator1 === 0 || denominator2 === 0) 
+
+    if (denominator1 === 0 || denominator2 === 0)
       throw new Error('Denominator is zero, correlation is undefined')
-  
+
     const result = numerator / (Math.sqrt(denominator1) * Math.sqrt(denominator2))
     return { value: result, error: null }
   }
@@ -223,7 +222,7 @@ const pearsonCorrelationCoefficient = async (vec1: number[], vec2: number[]): Pr
   }
 }
 
-export const similarity = async (vec1: number[], vec2: number[], measure: VectorSimilarityMeasures = VectorSimilarityMeasures.COSINE): Promise<{value: number | null; error: string | null}> => {
+export const similarity = async (vec1: number[], vec2: number[], measure: VectorSimilarityMeasures = VectorSimilarityMeasures.COSINE): Promise<{ value: number | null; error: string | null }> => {
   switch (measure) {
     case VectorSimilarityMeasures.COSINE:
       return cosineSimilarity(vec1, vec2)
@@ -241,36 +240,36 @@ export const similarity = async (vec1: number[], vec2: number[], measure: Vector
 }
 
 export const vectorSum = async (vectors: number[][]): Promise<number[] | null> => {
-  if (vectors.length === 0) 
+  if (vectors.length === 0)
     return null
-  
+
   const vectorLength = vectors[0].length
   for (const vector of vectors) {
-    if (vector.length !== vectorLength) 
+    if (vector.length !== vectorLength)
       return null
-    
+
   }
 
   const sums = new Array(vectorLength).fill(0)
-  
+
   for (const vector of vectors) {
-    for (let i = 0; i < vectorLength; i++) 
+    for (let i = 0; i < vectorLength; i++)
       sums[i] += vector[i]
-    
+
   }
 
   return sums
 }
 
 export const vectorAverage = async (vectors: number[][]): Promise<number[] | null> => {
-  if (vectors.length === 0) 
+  if (vectors.length === 0)
     return null
-  
+
   const vectorLength = vectors[0].length
   for (const vector of vectors) {
-    if (vector.length !== vectorLength) 
+    if (vector.length !== vectorLength)
       return null
-    
+
   }
 
   const sums = await vectorSum(vectors)
@@ -282,10 +281,10 @@ export const vectorAverage = async (vectors: number[][]): Promise<number[] | nul
 }
 
 export const rollingAverage = async (sumVector: number[], newVector: number[], observations: number): Promise<RollingAverageResult | null> => {
-  if(sumVector.length !== newVector.length)
+  if (sumVector.length !== newVector.length)
     throw new Error('Vectors must be of the same length')
 
-  if(observations < 1 ) 
+  if (observations < 1)
     throw new Error('Events must be greater than 0')
 
   const vectorSum = sumVector.map((sum, i) => (sum + newVector[i]))
@@ -311,11 +310,11 @@ export const findMostSimilarObject = async (
 
   for (const obj of arr) {
     const vec = obj[propName]
-    if (!Array.isArray(vec)) 
+    if (!Array.isArray(vec))
       return { object: null, error: 'Invalid object property. Must be an array of numbers.' }
 
     const { value, error } = await cosineSimilarity(embedding, vec)
-    if (error) 
+    if (error)
       return { object: null, error }
 
     if (value !== null && value > maxSimilarity) {
@@ -336,18 +335,18 @@ export const orderObjectsBySimilarity = async (
 
   for (const obj of arr) {
     const vec = obj[propName]
-    if (!Array.isArray(vec)) 
+    if (!Array.isArray(vec))
       return { objects: null, error: 'Invalid object property. Must be an array of numbers.' }
 
     const { value, error } = await cosineSimilarity(embedding, vec)
-    if (error) 
+    if (error)
       return { objects: null, error }
 
-    if (value !== null) 
+    if (value !== null)
       objectSimilarities.push({ queryId: obj.queryId, label: obj.label, confidence: +value.toFixed(2) })
-    
+
   }
-    
+
   objectSimilarities.sort((a, b) => b.confidence - a.confidence)
   return { objects: objectSimilarities, error: null }
 }

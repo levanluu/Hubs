@@ -21,9 +21,9 @@ import EmbeddingsService from '@/services/embeddings/Embeddings.service'
 import RunnerFactory from '@/services/queries/runners/RunnerFactory.service'
 import type HTTPRequestBodyTypes from '@/enums/queries/HTTPRequestBodyTypes.enum'
 
-export const execute = async (accountId: string, queryDefinition: INokoriDBQuery['config']): Promise<{data: any | null; error: any | null}> => {
+export const execute = async (accountId: string, queryDefinition: INokoriDBQuery['config']): Promise<{ data: any | null; error: any | null }> => {
 
-  if(!queryDefinition?.source?.engine){
+  if (!queryDefinition?.source?.engine) {
     logger.error('Engine is required', {
       accountId,
       queryDefinition,
@@ -32,11 +32,11 @@ export const execute = async (accountId: string, queryDefinition: INokoriDBQuery
   }
 
   const RunnerInstance = RunnerFactory.getRunner(queryDefinition.source.engine)
-  if(!RunnerInstance)
+  if (!RunnerInstance)
     return { data: null, error: 'No runner instance found' }
-  
+
   const runner = new RunnerInstance(accountId, queryDefinition)
-  
+
   return await runner.run()
 }
 
@@ -50,10 +50,10 @@ const createQuery = async (accountId: string, query: any): Promise<CreateQueryRe
   const { parentNodeId, ...queryToCreate } = query
   const newQuery: HubsQueries = { ...queryToCreate, accountId }
 
-  if(!parentNodeId || parentNodeId === query.hubId){
+  if (!parentNodeId || parentNodeId === query.hubId) {
     const hubRootQueryNode = await HubsContentService.getQueriesRootNode(accountId, query.hubId)
 
-    if(!hubRootQueryNode){
+    if (!hubRootQueryNode) {
       logger.error('Hub root query node not found', { accountId, query })
       return { data: null, error: true }
     }
@@ -62,69 +62,69 @@ const createQuery = async (accountId: string, query: any): Promise<CreateQueryRe
 
   newQuery.queryId = ID.queryId()
 
-  if(!newQuery.label || newQuery.label === ''){
+  if (!newQuery.label || newQuery.label === '') {
     logger.error('Label is required', { accountId, query })
     return { data: null, error: 'Label is required' }
   }
 
   newQuery.slug = dasherize(newQuery.label)
 
-  const embedding = await EmbeddingsService.createEmbedding(newQuery.label)
-  if(!embedding)
-    logger.error('Error creating embedding', { accountId, query: newQuery })
-  
-  if(embedding)
-    newQuery.labelEmbedding = JSON.stringify(embedding)
+  // const embedding = await EmbeddingsService.createEmbedding(newQuery.label)
+  // if(!embedding)
+  //   logger.error('Error creating embedding', { accountId, query: newQuery })
+
+  // if(embedding)
+  //   newQuery.labelEmbedding = JSON.stringify(embedding)
 
   // Was a source id provided?
   const sourceProvided = !!query?.sourceId
-  if(sourceProvided){
+  if (sourceProvided) {
     const sourceEngineType = await SourcesService.getSourceEngineType(accountId, query.sourceId)
-    if(!sourceEngineType)
+    if (!sourceEngineType)
       query.sourceId = null
-    
-    if(sourceEngineType)
+
+    if (sourceEngineType)
       newQuery.engine = sourceEngineType
   }
- 
-  if(newQuery?.command && !sourceProvided)
+
+  if (newQuery?.command && !sourceProvided)
     return { data: null, error: 'Command is not valid without a source' }
 
-  if(newQuery?.query && !sourceProvided)
+  if (newQuery?.query && !sourceProvided)
     return { data: null, error: 'Query is not valid without a source' }
 
-  if(newQuery?.uri && !sourceProvided)
+  if (newQuery?.uri && !sourceProvided)
     return { data: null, error: 'Uri is not valid without a source' }
 
-  if(newQuery?.body && !sourceProvided)
+  if (newQuery?.body && !sourceProvided)
     return { data: null, error: 'Body is not valid without a source' }
 
-  if(newQuery?.headers && !sourceProvided)
+  if (newQuery?.headers && !sourceProvided)
     return { data: null, error: 'Headers is not valid without a source' }
-  
-  if(newQuery?.queryParams && !sourceProvided)
+
+  if (newQuery?.queryParams && !sourceProvided)
     return { data: null, error: 'queryParams is not valid without a source' }
 
   // Make sure command is valid
-  if(newQuery?.command){
+  if (newQuery?.command) {
     const upperCasedCommand = newQuery.command.toUpperCase()
 
     // Need to make sure the command is valid for engine type
-    if(newQuery?.engine === EngineTypes.HTTP){
-      
-      if(!HTTPMethods[upperCasedCommand])
+    if (newQuery?.engine === EngineTypes.HTTP) {
+
+      if (!HTTPMethods[upperCasedCommand])
         return { data: null, error: 'Command is not valid for HTTP engine type' }
     }
 
-    if(newQuery?.engine !== EngineTypes.HTTP){
-      if(!SQLCommands[upperCasedCommand])
+    if (newQuery?.engine !== EngineTypes.HTTP) {
+      if (!SQLCommands[upperCasedCommand])
         return { data: null, error: 'Command is not valid for non-HTTP engine type' }
     }
   }
 
   try {
     const createdQuery = await QueriesRepository.createQuery(newQuery)
-    if(!createdQuery){
+    if (!createdQuery) {
       logger.error('Unknown error creating query', { newQuery })
       return { data: null, error: true }
     }
@@ -145,7 +145,7 @@ const createQuery = async (accountId: string, query: any): Promise<CreateQueryRe
       // label: newQuery.label ? newQuery.label : null,
     })
 
-    if(!createdHubNode){
+    if (!createdHubNode) {
       logger.error('Unknown error creating hub node', { newQuery })
       return { data: null, error: true }
     }
@@ -161,21 +161,21 @@ const createQuery = async (accountId: string, query: any): Promise<CreateQueryRe
 const deleteQuery = async (
   accountId: HubsQueries['accountId'],
   queryId: HubsQueries['queryId']):
-Promise<boolish> => {
+  Promise<boolish> => {
   return await QueriesRepository.deleteQuery(accountId, queryId)
 }
 
 const nullifyQuerySourceId = async (
-  accountId: string, 
-  sourceId: string): 
-Promise<boolish> => {
+  accountId: string,
+  sourceId: string):
+  Promise<boolish> => {
   // TODO: should we make hubId required again?
   return await QueriesRepository.nullifyQuerySourceId(accountId, sourceId)
 }
 
-export const getQueryById = async(accountId: string, queryId: string): Promise<INokoriDBQuery | null> => {
+export const getQueryById = async (accountId: string, queryId: string): Promise<INokoriDBQuery | null> => {
   const queryDefinition = await QueriesRepository.getQueryById(accountId, queryId)
-  if(!queryDefinition){
+  if (!queryDefinition) {
     logger.error('Query definition not found for queryId', {
       accountId,
       queryId,
@@ -190,113 +190,113 @@ export const getQueryById = async(accountId: string, queryId: string): Promise<I
 export const updateQuery = async (
   accountId: HubsQueries['accountId'],
   dto: Partial<INokoriDBQuery>,
-  queryId: HubsQueries['queryId']): 
-Promise<boolish> => {
+  queryId: HubsQueries['queryId']):
+  Promise<boolish> => {
 
   const update: Partial<HubsQueries> = {}
-  
-  if(!dto.meta){
+
+  if (!dto.meta) {
     logger.error('{meta: ...} - No meta data provided for query update', { dto })
     return null
   }
 
-  if(dto.meta.label){
+  if (dto.meta.label) {
     update.label = dto.meta.label
     update.slug = dasherize(dto.meta.label)
 
     const embedding = await EmbeddingsService.createEmbedding(update.label)
-    if(!embedding)
+    if (!embedding)
       logger.error('Error creating embedding', { accountId, query: update })
-    
-    if(embedding)
+
+    if (embedding)
       update.labelEmbedding = JSON.stringify(embedding)
   }
 
   // Need to make sure that the source exists in the hub?
-  if(dto.config?.source?.sourceId)
+  if (dto.config?.source?.sourceId)
     update.sourceId = dto.config.source.sourceId
 
-  if(dto.config?.command)
+  if (dto.config?.command)
     update.command = dto.config.command.toUpperCase() as SQLCommands | HTTPMethods
 
-  if(dto.config?.source?.engine)
+  if (dto.config?.source?.engine)
     update.engine = dto.config.source.engine
 
-  if(dto.config?.query?.query)
+  if (dto.config?.query?.query)
     update.query = dto.config.query.query
-  
-  if(dto.config?.context)
+
+  if (dto.config?.context)
     update.context = JSON.stringify(dto.config.context)
 
-  if(dto.config?.uri)
+  if (dto.config?.uri)
     update.uri = dto.config.uri
 
-  if(dto.config?.body)
+  if (dto.config?.body)
     update.body = dto.config.body
 
-  if(dto.config?.requestBodyType)
+  if (dto.config?.requestBodyType)
     update.requestBodyType = dto.config.requestBodyType
 
-  if(dto.config?.headers)
+  if (dto.config?.headers)
     update.headers = typeof dto.config.headers === 'string' ? dto.config.headers : JSON.stringify(dto.config.headers)
-  
-  if(dto.config?.queryParams)
+
+  if (dto.config?.queryParams)
     update.queryParams = typeof dto.config.queryParams === 'string' ? dto.config.queryParams : JSON.stringify(dto.config.queryParams)
 
   // if(dto.config?.constraints)
   //   update.constraints = JSON.stringify(dto.config.constraints)
-  
+
   return await QueriesRepository.updateQuery(accountId, update, queryId)
 }
 
 async function _mapQueryToInterface(query: HubsQueries): Promise<INokoriDBQuery> {
   let queryContext = null
-  if(query?.context){
-    if(typeof query.context === 'string')
+  if (query?.context) {
+    if (typeof query.context === 'string')
       queryContext = JSON.parse(query.context)
     else
       queryContext = query.context
   }
 
   let headers = null
-  if(query?.headers){
-    if(typeof query.headers === 'string')
+  if (query?.headers) {
+    if (typeof query.headers === 'string')
       headers = JSON.parse(query.headers)
     else
       headers = query.headers
   }
 
   let queryParams = null
-  if(query?.queryParams){
-    if(typeof query.queryParams === 'string')
+  if (query?.queryParams) {
+    if (typeof query.queryParams === 'string')
       queryParams = JSON.parse(query.queryParams)
     else
       queryParams = query.queryParams
   }
 
-  let SQLQuery: null | {queryId: string; query: string | null} = null
-  if(query?.queryId){
+  let SQLQuery: null | { queryId: string; query: string | null } = null
+  if (query?.queryId) {
     SQLQuery = {
       queryId: query.queryId,
       query: query?.query ?? null,
     }
   }
-  
+
   let uri: string | null = null
-  if(query?.uri)
+  if (query?.uri)
     uri = query.uri
-  
+
   else
     uri = null
 
   let queryBody: string | null = null
-  if(query?.body)
+  if (query?.body)
     queryBody = query.body
 
   let requestBodyType: HTTPRequestBodyTypes | null = null
-  if(query?.requestBodyType)
+  if (query?.requestBodyType)
     requestBodyType = query.requestBodyType
-  
+
   const returnObject = {
     meta: {
       engine: query.engine,
@@ -327,7 +327,7 @@ async function _mapQueryToInterface(query: HubsQueries): Promise<INokoriDBQuery>
 export const getQueriesInHub = async (
   accountId: HubsQueries['accountId'],
   hubId: HubsQueries['hubId']):
-Promise<HubsQueries[]> => {
+  Promise<HubsQueries[]> => {
   return await QueriesRepository.getQueriesInHub(accountId, hubId)
 }
 

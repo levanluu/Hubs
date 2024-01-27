@@ -50,6 +50,8 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     console.log('\n')
   }
 
+  console.log('\n')
+
   const nokoriBanner = await figlet(`Nokori v${PackageInfo.version}`, {
     font: "Slant",
     whitespaceBreak: true,

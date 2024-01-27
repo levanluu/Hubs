@@ -284,7 +284,7 @@ CREATE TABLE `hubs_queries` (
   `labelEmbedding` json DEFAULT NULL,
   `slug` varchar(85) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `sourceId` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `engine` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `engine` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'mysql',
   `query` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `uri` text COLLATE utf8mb4_unicode_ci,
   `headers` json DEFAULT NULL,

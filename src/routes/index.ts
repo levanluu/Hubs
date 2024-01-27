@@ -10,8 +10,6 @@ import feedbackRoutes from './feedback'
 import frequenciesRoutes from './frequencies'
 import generateRoutes from './ai/generate'
 import hubsRoutes from './hubs'
-import mailRoutes from './mail'
-import paymentsRoutes from './payments'
 import queriesRoutes from './queries'
 import sourcesRoutes from './sources'
 import summarizeRoutes from './ai/summarize'
@@ -29,8 +27,6 @@ router.use('/v1/embeddings', embeddings)
 router.use('/v1/feedback', feedbackRoutes)
 router.use('/v1/frequencies', frequenciesRoutes)
 router.use('/v1/hubs', hubsRoutes)
-router.use('/v1/mail', mailRoutes)
-router.use('/v1/payments', paymentsRoutes)
 router.use('/v1/queries', queriesRoutes)
 router.use('/v1/sources', sourcesRoutes)
 router.use('/v1/triggers', triggersRoutes)
