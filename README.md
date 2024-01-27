@@ -11,12 +11,34 @@ With Core, connect the world's most popular SQL databases and any HTTP Rest API 
  <img src="https://github.com/getnokori/api/assets/1544125/4c3b8d63-d2ab-4857-9f79-5ddabbe69c15" width="500px" />
 </p>
 
-Core organizes logically grouped data souces/connections in data "Hubs" that allow developers to organize connections not by database or api endpoint, but by related kind/type for ease of access and rapid development.
-
 Core acts as a universal data layer that allows developers to connect SQL databases, document stores, vector dbs, and any third party API via a very intuitive UI.
+
+Core organizes logically grouped data souces/connections in to data "Hubs" that allow developers to organize connections not by database or api endpoint, but by related kind/type for ease of access and rapid development.
+
+Compose SQL queries directly in the UI, test them, then deploy them as consumable REST endpoints that can be consumed by any application or service.
 
 Once connected, developers can consume both SQL queries and REST endpoints globally via a univerally consistent, singular REST API endpoint via SDK or API.
 
+## Roadmap
+
+We have an exciting list of features planned for Core, including:
+
+- [x] MySQL Support
+- [x] Postgres Support
+- [x] MariaDB Support
+- [x] HTTP Rest API Support
+- [x] SQL Query Composing & Testing
+- [x] One-Click REST Endpoint Deployment
+- [ ] Triggers [WIP]
+- [ ] Webhooks
+- [ ] Event Subscriptions
+- [ ] Data Pipelines
+- [ ] Write Throughput Multipliers
+- [ ] Query Analytics
+- [ ] Query Caching
+- [ ] Query Rate Limiting
+- [ ] Respone Transformers
+- [ ] Multi-Source Real-Time Materialized Views
 
 ## Configuration
 
