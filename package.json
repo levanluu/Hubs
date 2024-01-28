@@ -1,7 +1,7 @@
 {
-	"name": "@nokori/core",
+	"name": "@nokori/hubs",
 	"version": "0.2.0",
-	"description": "Core API for Nokori",
+	"description": "Nokori Hubs",
 	"keywords": [],
 	"homepage": "https://github.com/getnokori/core#readme",
 	"bugs": {
