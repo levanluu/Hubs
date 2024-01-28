@@ -1,8 +1,10 @@
-# Nokori Core
+# Hubs
 
-Nokori Core is a rapidly scalable microservice API server enabling teams of all sizes to forego data source fetching/updating boilerplating that comprises large amounts of the code written for most projects.
+Hubs is a rapidly scalable data gateway platform.
 
-With Core, connect the world's most popular SQL databases and any HTTP Rest API in seconds within the same interface you test adhoc queries and connections.
+Teams spend countless hours writing repetitive code to fetch and put data to a variety of backend data sources. The majority of data connections in modern times connect via a handful of protocols, leaving developers largely copying and pasting mostly verbatim code to simply get and put data for their applications.
+
+With Hubs, we've abstracted the repetitive boilerplating, freeing developers to connect the world's most popular SQL databases and any HTTP Rest API in seconds within the same interface you test adhoc queries and connections via [Nokori UI](https://github.com/getnokori/nokori-ui).
 
 
 ## About
@@ -11,17 +13,18 @@ With Core, connect the world's most popular SQL databases and any HTTP Rest API 
  <img src="https://github.com/getnokori/api/assets/1544125/4c3b8d63-d2ab-4857-9f79-5ddabbe69c15" width="500px" />
 </p>
 
-Core acts as a universal data layer that allows developers to connect SQL databases, document stores, vector dbs, and any third party API via a very intuitive UI.
 
-Core organizes logically grouped data souces/connections in to data "Hubs" that allow developers to organize connections not by database or api endpoint, but by related kind/type for ease of access and rapid development.
+Hubs organizes logically grouped data souces/connections in to data "Hubs" that allow developers to organize connections not by database or api endpoint, but by related kind/type for ease of access and rapid development.
 
 Compose SQL queries directly in the UI, test them, then deploy them as consumable REST endpoints that can be consumed by any application or service.
 
-Once connected, developers can consume both SQL queries and REST endpoints globally via a univerally consistent, singular REST API endpoint via SDK or API.
+Once connected, developers can consume all connected data sources globally via a univerally consistent, singular REST API endpoint via SDK or API.
+
+The goal is rapid development and deployment of new applications via ease of data access.
 
 ## Roadmap
 
-We have an exciting list of features planned for Core, including:
+We have an exciting list of features planned for Hubs, including:
 
 - [x] MySQL Support
 - [x] Postgres Support
@@ -29,8 +32,9 @@ We have an exciting list of features planned for Core, including:
 - [x] HTTP Rest API Support
 - [x] SQL Query Composing & Testing
 - [x] One-Click REST Endpoint Deployment
-- [ ] Triggers [WIP]
-- [ ] Webhooks
+- [ ] 🚧 Triggers [WIP]
+- [ ] 🚧 Webhooks
+- [ ] Data Enrichers
 - [ ] Event Subscriptions
 - [ ] Data Pipelines
 - [ ] Write Throughput Multipliers
@@ -40,24 +44,30 @@ We have an exciting list of features planned for Core, including:
 - [ ] Respone Transformers
 - [ ] Multi-Source Real-Time Materialized Views
 
-## Configuration
-
-Backend data sources can be configured via [the UI](https://github.com/getnokori/nokori-ui):
-
-![image](https://github.com/getnokori/api/assets/1544125/bc4ed21a-020d-41f5-a636-14a5a767dc3c)
+Feature request? Open an issue to get the convo started.
 
 
 ## Getting Started
 
-All technical documentation is available by cloning and running the [docs repo](https://github.com/getnokori/docs).
+Hubs is accessible via REST API. To get started, you must first init a new project, configure basic project settings, and the build script will generate your API Key that can be used for API Requests, SDK, and to enable [Nokori UI](https://github.com/getbokori) to connect with Hubs.
 
-## To create the database
+### Install the Project
 
-Use the sql file found in `./scripts/db/schema-create.sql`
+```bash
+npm i
+```
+
+### Init Build
+
+```bash
+npm run build
+```
+
+<img width="619" alt="Screenshot 2024-01-27 at 10 33 55 PM" src="https://github.com/getnokori/core/assets/1544125/c00fc890-8b6f-451a-9ace-f08d6f4c72d1">
+
+Save your API key at the end of the process and include it in API requests using the header `X-Nokori-API` if not using the SDK or UI.
 
 ## To run locally
-
-`npm i`
 
 `npm run dev`
 
