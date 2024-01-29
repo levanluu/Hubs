@@ -2,6 +2,8 @@
 
 Hubs is a rapidly scalable data gateway platform.
 
+Build data-rich applications without building backend APIs and boilerplate code for basic CRUD operations to your favorite database and/or third party APIs.
+
 Teams spend countless hours writing repetitive code to fetch and put data to a variety of backend data sources. The majority of data connections in modern times connect via a handful of protocols, leaving developers largely copying and pasting mostly verbatim code to simply get and put data for their applications.
 
 With Hubs, we've abstracted the repetitive boilerplating, freeing developers to connect the world's most popular SQL databases and any HTTP Rest API in seconds within the same interface you test adhoc queries and connections via [Nokori UI](https://github.com/getnokori/nokori-ui).
@@ -49,7 +51,9 @@ Feature request? Open an issue to get the convo started.
 
 ## Getting Started
 
-Hubs is accessible via REST API. To get started, you must first init a new project, configure basic project settings, and the build script will generate your API Key that can be used for API Requests, SDK, and to enable [Nokori UI](https://github.com/getbokori) to connect with Hubs.
+Hubs is accessible via REST API or SDK. 
+
+To get started, init a new project, configure basic project settings, and the build script will generate your API Key that can be used for API Requests, SDK, and to enable [Nokori UI](https://github.com/getbokori) to connect with your Hubs instance.
 
 ### Install the Project
 
@@ -60,7 +64,7 @@ npm i
 ### Init Build
 
 ```bash
-npm run build
+npm run init
 ```
 
 <img width="619" alt="Screenshot 2024-01-27 at 10 33 55 PM" src="https://github.com/getnokori/core/assets/1544125/c00fc890-8b6f-451a-9ace-f08d6f4c72d1">
@@ -70,6 +74,37 @@ Save your API key at the end of the process and include it in API requests using
 ## To run locally
 
 `npm run dev`
+
+## Consuming Queries & APIs
+
+To consume data once endpoints are saved/deployed is as easy as: 
+
+### SDK
+
+```js
+import nokori from '@nokori/js-sdk'
+const nk = nokori('api_key')
+
+const { data, error } = await nk.query.execute({
+		queryId: 'nk.q.-ddqHfqeZNihbChcAbf', //Global Cloud Query ID
+		context: {
+			name: formData.get('name'),
+		},
+	})
+```
+
+### cURL
+
+```bash {{ title: 'cURL' }}
+curl https://api.nokori.com/v1/queries/execute \
+  -X POST
+  -H 'x-nokori-api-key: {{apiKey}}' \
+  -H 'Content-Type: application/json' \
+  -d '{"queryId": "nk.q.Yum6RAQFvj2eMf5kLKR", "context": {}}'
+```
+
+## Full Documentation
+Full documentation coming soon...
 
 ## Github Actions
 
